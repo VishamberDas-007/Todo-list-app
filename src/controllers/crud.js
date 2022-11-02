@@ -1,20 +1,18 @@
 const response = require("../responses/response"); // requiring the response
 require("dotenv").config();
 const { List } = require("../models/list");
-const moment = require("moment");
+// const moment = require("moment");
 const { ObjectID } = require("bson");
 
 // for inserting into the todo list
 exports.insert = async (req) => {
 	try {
-		// req for the entered credentials
-
-		const date = moment();
+		// const date = moment();
 
 		// creating an instance for adding the vendor details
 		const details = new List({
 			title: req.body.title,
-			date: req.body.date,
+			date: new Date(req.body.date),
 		});
 
 		// saving the details into the collection
@@ -33,8 +31,7 @@ exports.insert = async (req) => {
 	}
 };
 
-// for updating the todo list+++++++++++++++++++
-
+// for updating the todo list
 exports.update = async (req) => {
 	try {
 		const id = req.params.id;
@@ -42,6 +39,9 @@ exports.update = async (req) => {
 			title: req.body.title,
 			date: req.body.date,
 		};
+		if (!ObjectID.isValid(id)) {
+			return response.errorResponse("Object id is invalid", id);
+		}
 
 		// find if the id is present or not
 		const idPresent = await List.find({
@@ -49,7 +49,7 @@ exports.update = async (req) => {
 		});
 
 		if (idPresent.length == 0) {
-			return response.notFound("Invalid details");
+			return response.notFound("No such record found");
 		}
 
 		const updateDetails = await List.findOneAndUpdate(
@@ -65,6 +65,7 @@ exports.update = async (req) => {
 
 		return response.successResponse("Record updated successfully", result);
 	} catch (error) {
+		console.log(error);
 		return response.errorResponse(
 			"Error occurred while updating the todo list",
 			error
@@ -93,6 +94,40 @@ exports.deleting = async (req) => {
 		console.log({ error });
 		return response.errorResponse(
 			"Error occurred while deleting the details from Todo list",
+			error
+		);
+	}
+};
+
+// listing the todo records
+exports.listing = async (req) => {
+	try {
+		const { page = 1, pageSize = 2, fromDate, toDate } = req.query; // requesting for the params
+
+		// creating an object to check the date range
+		const checkDateRange = {
+			date: { $gte: fromDate, $lt: toDate },
+		};
+
+		// passing that object along with the page limit and page number
+		const records = await List.find({ checkDateRange })
+			.limit(pageSize * 1)
+			.skip((page - 1) * pageSize);
+
+		// checking if the record's length is 0
+		if (records.length == 0) {
+			return response.notFound("Record is empty");
+		} else {
+			// else returning the response
+			return response.successResponse("Records found successfully ", {
+				total: records.length,
+				records,
+			});
+		}
+	} catch (error) {
+		// returning the error response
+		return response.errorResponse(
+			"Error occurred while listing the records",
 			error
 		);
 	}
