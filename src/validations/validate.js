@@ -1,4 +1,4 @@
-const { body, param, check, validationResult } = require("express-validator");
+const { body, param, check, query } = require("express-validator");
 const response = require("../responses/response");
 
 // record insert validation
@@ -14,7 +14,14 @@ const recordUpdateValidate = [
 	body("date").notEmpty().isDate().withMessage("Enter the Date"),
 ];
 
+// login validation
+const loginValidate = [
+	body("email").notEmpty().withMessage("Enter the email"),
+	body("password").notEmpty().withMessage("Enter the password"),
+];
+
 module.exports = {
 	recordInsertValidate,
 	recordUpdateValidate,
+	loginValidate,
 };
