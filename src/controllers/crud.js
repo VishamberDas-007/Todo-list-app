@@ -99,16 +99,32 @@ exports.deleting = async (req) => {
 exports.listing = async (req) => {
 	try {
 		const { page, pageSize, fromDate, toDate } = req.query; // requesting for the params
-
+		let records;
 		// creating an object to check the date range
 		const checkDateRange = {
 			date: { $gte: fromDate, $lt: toDate },
 		};
 
-		// passing that object along with the page limit and page number
-		const records = await List.find({ checkDateRange })
-			.limit(pageSize * 1)
-			.skip((page - 1) * pageSize);
+		// if all the constraints exists
+		if (
+			req.query.page &&
+			req.query.pageSize &&
+			req.query.fromDate &&
+			req.query.toDate
+		) {
+			// passing that object along with the page limit and page number
+			records = await List.find(checkDateRange)
+				.limit(pageSize * 1)
+				.skip((page - 1) * pageSize);
+		} else if (req.query.page && req.query.pageSize) {
+			// if only page and page size are given as inputs
+			records = await List.find()
+				.limit(pageSize * 1)
+				.skip((page - 1) * pageSize);
+		} else {
+			// otherthan the above two conditions this will execute
+			records = await List.find();
+		}
 
 		// checking if the record's length is 0
 		if (records.length == 0) {
