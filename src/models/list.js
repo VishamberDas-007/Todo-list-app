@@ -15,5 +15,5 @@ const todoListDetails = new mongoose.Schema({
 
 // collection creation
 const List = new mongoose.model("List", todoListDetails);
-// console.log({ Detail });
+
 module.exports = { List };

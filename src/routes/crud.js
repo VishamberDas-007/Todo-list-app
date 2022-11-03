@@ -33,6 +33,7 @@ routes.patch("/update/:id", validate.recordUpdateValidate, async (req, res) => {
 
 // delete request for the data deletion
 routes.delete("/delete/:id", async (req, res) => {
+	// controller result
 	let result = await crud.deleting(req);
 	return res.status(result.status).json(result);
 });

@@ -27,7 +27,6 @@ exports.login = async (req) => {
 			return response.notFound("Invalid credentials");
 		}
 	} catch (error) {
-		console.log({ error });
 		// returning the error resposne
 		return response.errorResponse("Error occurred while logging in", error);
 	}

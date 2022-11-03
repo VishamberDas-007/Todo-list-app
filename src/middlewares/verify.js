@@ -12,7 +12,6 @@ function jwtVerify(req, res) {
 	const bearerHeader = token.split(" ");
 	const bearer = bearerHeader[1];
 	const tokenData = jwt.verify(bearer, process.env.SECRET_KEY);
-	console.log({ tokenData });
 	return tokenData;
 }
 
@@ -30,7 +29,6 @@ function isAdmin(req, res, next) {
 
 		return next();
 	} catch (error) {
-		// console.log({ error });
 		return res.status(400).json(error);
 	}
 }

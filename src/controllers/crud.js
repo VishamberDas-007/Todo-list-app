@@ -17,12 +17,10 @@ exports.insert = async (req) => {
 
 		// saving the details into the collection
 		const result = await details.save();
-		console.log(result);
 
 		// returning the response
 		return response.successResponse("Data entered successfully", details);
 	} catch (error) {
-		console.log({ error });
 		// returning the error resposne
 		return response.errorResponse(
 			"Error occurred while inserting the data into todo list",
@@ -40,7 +38,7 @@ exports.update = async (req) => {
 			date: req.body.date,
 		};
 		if (!ObjectID.isValid(id)) {
-			return response.errorResponse("Object id is invalid", id);
+			return response.errorResponse("Id is invalid", id);
 		}
 
 		// find if the id is present or not
@@ -65,7 +63,6 @@ exports.update = async (req) => {
 
 		return response.successResponse("Record updated successfully", result);
 	} catch (error) {
-		console.log(error);
 		return response.errorResponse(
 			"Error occurred while updating the todo list",
 			error
@@ -84,14 +81,13 @@ exports.deleting = async (req) => {
 		}
 
 		const findID = await List.findOne({ _id: id });
-		console.log({ findID });
+
 		if (!findID) {
 			return response.notFound("No such Record found");
 		}
 		const deleteTodo = await List.deleteOne({ _id: id });
 		return response.successResponse("Record deleted successfully", findID);
 	} catch (error) {
-		console.log({ error });
 		return response.errorResponse(
 			"Error occurred while deleting the details from Todo list",
 			error
