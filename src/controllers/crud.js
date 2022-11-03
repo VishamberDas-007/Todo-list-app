@@ -98,7 +98,7 @@ exports.deleting = async (req) => {
 // listing the todo records
 exports.listing = async (req) => {
 	try {
-		const { page = 1, pageSize = 2, fromDate, toDate } = req.query; // requesting for the params
+		const { page, pageSize, fromDate, toDate } = req.query; // requesting for the params
 
 		// creating an object to check the date range
 		const checkDateRange = {
